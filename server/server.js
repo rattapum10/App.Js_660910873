@@ -81,3 +81,19 @@ app.delete('/api/workouts/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+// PATCH /api/workouts/:id — แก้ไขรายการ
+app.patch('/api/workouts/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const workout = workouts.find(w => w.id === id);
+  if (!workout) {
+    return res.status(404).json({ error: 'ไม่พบรายการนี้' });
+  }
+  const { name, category, duration, date } = req.body;
+  if (name !== undefined) workout.name = name;
+  if (category !== undefined) workout.category = category;
+  if (duration !== undefined) workout.duration = Number(duration);
+  if (date !== undefined) workout.date = date;
+
+  res.json(workout);
+});

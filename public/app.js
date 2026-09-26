@@ -1,29 +1,52 @@
-const API_URL = '/api/workouts';
-
-// ดึงรายการข้อมูล (GET /api/workouts)
+// 1. ฟังก์ชันดึงรายการจาก API มาแสดงผล พร้อมปุ่มลบ
 async function fetchWorkouts() {
   const category = document.getElementById('filter-category').value;
-  const url = category ? `${API_URL}?category=${category}` : API_URL;
+  let url = '/api/workouts';
+  if (category) {
+    url += `?category=${category}`;
+  }
 
-  const res = await fetch(url);
-  const data = await res.json();
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const list = document.getElementById('workout-list');
+    list.innerHTML = '';
 
-  const list = document.getElementById('workout-list');
-  list.innerHTML = '';
-
-  data.forEach(item => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <div>
-        <strong>${item.title}</strong> [${item.category}] - ${item.duration} นาที (${item.date})
-      </div>
-      <button class="btn-delete" onclick="deleteWorkout(${item.id})">ลบ</button>
-    `;
-    list.appendChild(li);
-  });
+    data.forEach(item => {
+      const li = document.createElement('li');
+      li.style.cssText = 'padding: 12px; margin-bottom: 8px; background: #f9f9f9; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;';
+      li.innerHTML = `
+        <div>
+          <strong>${item.title}</strong> (${item.category}) - ${item.duration} นาที
+          <br><small style="color: #666;">วันที่: ${item.date || '-'}</small>
+        </div>
+        <button onclick="deleteWorkout(${item.id})" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">ลบ</button>
+      `;
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.error('Error fetching workouts:', err);
+  }
 }
 
-// เพิ่มรายการใหม่ (POST /api/workouts)
+// 2. ฟังก์ชันลบรายการ (DELETE)
+async function deleteWorkout(id) {
+  if (!confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) return;
+
+  try {
+    const res = await fetch(`/api/workouts/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (res.ok) {
+      fetchWorkouts(); // โหลดรายการใหม่มาแสดงทันที
+    }
+  } catch (err) {
+    console.error('Error deleting workout:', err);
+  }
+}
+
+// 3. ดักจับการส่งฟอร์มเพิ่มรายการ (POST)
 document.getElementById('add-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -32,30 +55,21 @@ document.getElementById('add-form').addEventListener('submit', async (e) => {
   const duration = document.getElementById('duration').value;
   const date = document.getElementById('date').value;
 
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, category, duration, date })
-  });
+  try {
+    const res = await fetch('/api/workouts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, category, duration, date })
+    });
 
-  if (res.status === 201) {
-    document.getElementById('add-form').reset();
-    fetchWorkouts();
-  } else {
-    const err = await res.json();
-    alert(err.message);
+    if (res.ok) {
+      document.getElementById('add-form').reset();
+      fetchWorkouts();
+    }
+  } catch (err) {
+    console.error('Error adding workout:', err);
   }
 });
 
-// ลบรายการ (DELETE /api/workouts/:id)
-async function deleteWorkout(id) {
-  if (!confirm('ต้องการลบรายการนี้ใช่หรือไม่?')) return;
-
-  const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-  if (res.status === 204) {
-    fetchWorkouts();
-  }
-}
-
-// โหลดข้อมูลเมื่อเปิดหน้าเว็บ
+// 4. โหลดรายการเมื่อเปิดหน้าเว็บ
 fetchWorkouts();
