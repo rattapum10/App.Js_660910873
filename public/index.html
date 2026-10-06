@@ -2,49 +2,50 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workout Log - บันทึกการออกกำลังกาย</title>
-  <link rel="stylesheet" href="style.css">
+  <title>ระบบสมาชิก</title>
+  <style>
+    body { font-family: sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    form { display: grid; gap: 0.5rem; margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🏋️‍♂️ Workout Log</h1>
+  <h1>ระบบสมาชิก</h1>
+  <p id="message"></p>
 
-    <!-- ฟอร์มเพิ่มรายการ -->
-    <section class="card">
-      <h2>เพิ่มรายการออกกำลังกาย</h2>
-      <form id="add-form">
-        <input type="text" id="title" placeholder="ชื่อกิจกรรม (เช่น ตีแบดมินตัน)" required>
-        <select id="category" required>
-          <option value="">-- เลือกประเภท --</option>
-          <option value="badminton">แบดมินตัน (Badminton)</option>
-          <option value="cardio">คาร์ดิโอ (Cardio)</option>
-          <option value="weight">เวทเทรนนิ่ง (Weight Training)</option>
-        </select>
-        <input type="number" id="duration" placeholder="ระยะเวลา (นาที)" required>
-        <input type="date" id="date">
-        <button type="submit">บันทึกรายการ</button>
-      </form>
-    </section>
+  <h2>สมัครสมาชิก</h2>
+  <form id="register-form">
+    <input name="username" placeholder="username (a-z, 0-9, _)" required>
+    <input name="name" placeholder="ชื่อ-นามสกุล" required>
+    <input name="email" type="email" placeholder="อีเมล" required>
+    <input name="password" type="password" placeholder="รหัสผ่าน (อย่างน้อย 8 ตัว)" minlength="8" required>
+    <button type="submit">สมัครสมาชิก</button>
+  </form>
 
-    <!-- ตัวกรอง (Filter Query String) -->
-    <section class="filter-section">
-      <label for="filter-category"><strong>กรองตามประเภท:</strong> </label>
-      <select id="filter-category" onchange="fetchWorkouts()">
-        <option value="">ทั้งหมด</option>
-        <option value="badminton">แบดมินตัน</option>
-        <option value="cardio">คาร์ดิโอ</option>
-        <option value="weight">เวทเทรนนิ่ง</option>
-      </select>
-    </section>
+  <h2>เข้าสู่ระบบ</h2>
+  <form id="login-form">
+    <input name="username" placeholder="username" required>
+    <input name="password" type="password" placeholder="รหัสผ่าน" required>
+    <button type="submit">เข้าสู่ระบบ</button>
+  </form>
 
-    <!-- แสดงรายการ -->
-    <section class="card">
-      <h2>รายการทั้งหมด</h2>
-      <ul id="workout-list"></ul>
-    </section>
-  </div>
+  <h2>สมาชิกทั้งหมด</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>username</th>
+        <th>ชื่อ</th>
+        <th>อีเมล</th>
+        <th>role</th>
+        <th>จัดการ</th>
+      </tr>
+    </thead>
+    <tbody id="user-table"></tbody>
+  </table>
 
-  <script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
