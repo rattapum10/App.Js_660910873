@@ -11,6 +11,8 @@
   "author": "Ratthaphum Laokum",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.0"
+    "bcryptjs": "^3.0.3",
+    "express": "^4.22.3",
+    "mongodb": "^7.7.0"
   }
 }
